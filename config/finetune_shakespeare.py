@@ -13,6 +13,7 @@ max_iters = 100
 # only save checkpoints if the validation loss improves
 always_save_checkpoint = False
 dataset = 'shakespeare'
+hf_org = 'alif-munim' # your huggingface account
 
 # the number of examples per iter:
 # 1 batch_size * 32 grad_accum * 1024 tokens = 32,768 tokens/iter
@@ -36,13 +37,6 @@ ft_method = "plora" if use_plora else "mlora" if use_mlora else "moft" if use_mo
 wandb_log = True # feel free to turn on
 wandb_project = 'gpt2-shakespeare'
 wandb_run_name = 'ft-' + ft_method + '-' + str(time.time())
-
-
-# if init_from == 'gpt2-xl':
-#     # decrease grad accum from 32 to save memory
-#     use_lora = True
-#     gradient_accumulation_steps = 8
-#     block_size = 128
 
 if use_plora == True:
     learning_rate = 1e-3
@@ -77,7 +71,7 @@ elif use_poft == True:
     
 elif use_moft == True:
     compile = False
-    oft_modules = ["CausalSelfAttention"]
+    ft_modules = ["CausalSelfAttention"]
     oft_r=4
     oft_eps=1e-3
     oft_coft=False
@@ -85,4 +79,4 @@ elif use_moft == True:
     
 elif use_mlora == True:
     compile = False
-    lora_modules = ["CausalSelfAttention"]
+    ft_modules = ["CausalSelfAttention"]

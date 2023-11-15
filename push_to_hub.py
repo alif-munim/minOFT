@@ -79,8 +79,8 @@ if modular_ft == '':
     hf_repo = f"{init_from}-{dataset}"
 else:
     hf_repo = f"{init_from}-{modular_ft}-{dataset}"
-model.push_to_hub(organization="alif-munim", repo_name=hf_repo)
+model.push_to_hub(organization=hf_org, repo_name=hf_repo)
 
 print(f"testing model loading")
-model.from_pretrained(f"alif-munim/{hf_repo}")
-print(f"successfully loaded model from alif-munim/{hf_repo}")
+model.from_pretrained(f"{hf_org}/{hf_repo}")
+print(f"successfully loaded model from {hf_org}/{hf_repo}")

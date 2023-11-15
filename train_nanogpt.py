@@ -239,9 +239,6 @@ def configure_optimizers_ft(self, param_list, weight_decay, learning_rate, betas
     return optimizer
 
 
-
-
-
 if use_plora:
     print(f'using parametrized lora fine-tuning...')
     
@@ -268,14 +265,14 @@ elif use_poft:
 elif use_moft:
     model.requires_grad_(False)
     print(f'using modular oft fine-tuning...')
-    oft_params, train_names = inject_trainable_oft(model, target_replace_module=oft_modules, verbose=False, r=oft_r, eps=oft_eps, is_coft=oft_coft, block_share=oft_block_share)
+    oft_params, train_names = inject_trainable_oft(model, target_replace_module=ft_modules, verbose=False, r=oft_r, eps=oft_eps, is_coft=oft_coft, block_share=oft_block_share)
     optimizer = configure_optimizers_ft(model, oft_params, weight_decay, learning_rate, (beta1, beta2), device_type)
     print(f"optimizing {param_count(oft_params)} parameters")
     
 elif use_mlora:
     model.requires_grad_(False)
     print(f'using modular lora fine-tuning...')
-    lora_params, train_names = inject_trainable_lora(model, target_replace_module=lora_modules, r=4, loras=None,verbose = False, dropout_p=0.0, scale=1.0,)
+    lora_params, train_names = inject_trainable_lora(model, target_replace_module=ft_modules, r=4, loras=None,verbose = False, dropout_p=0.0, scale=1.0,)
     optimizer = model.configure_optimizers(weight_decay, learning_rate, (beta1, beta2), device_type)
     
     lora_param_list = list(get_lora_params(model, print_shapes=False))
@@ -285,7 +282,9 @@ else:
     print(f'not using LoRA or OFT...')
     optimizer = model.configure_optimizers(weight_decay, learning_rate, (beta1, beta2), device_type)
     
-
+    
+for name, param in model.named_parameters():
+    print(f"{name} // requires_grad: {param.requires_grad}")
 
 
 if compile:

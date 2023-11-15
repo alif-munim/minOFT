@@ -37,13 +37,6 @@ wandb_log = True # feel free to turn on
 wandb_project = 'gpt2-guanaco'
 wandb_run_name = 'ft-' + ft_method + '-' + str(time.time())
 
-
-# if init_from == 'gpt2-xl':
-#     # decrease grad accum from 32 to save memory
-#     use_lora = True
-#     gradient_accumulation_steps = 8
-#     block_size = 128
-
 if use_plora == True:
     learning_rate = 1e-3
     lora_dropout_p = 0.0
@@ -77,7 +70,7 @@ elif use_poft == True:
     
 elif use_moft == True:
     compile = False
-    oft_modules = ["CausalSelfAttention"]
+    ft_modules = ["CausalSelfAttention"]
     oft_r=4
     oft_eps=1e-3
     oft_coft=False
@@ -85,4 +78,4 @@ elif use_moft == True:
     
 elif use_mlora == True:
     compile = False
-    lora_modules = ["CausalSelfAttention"]
+    ft_modules = ["CausalSelfAttention"]
