@@ -74,11 +74,10 @@ beta1 = 0.9
 beta2 = 0.95
 
 # Replace modules with trainable OFT linear modules
-ft_modules = ["CausalAttention"]
+ft_modules = ["CausalSelfAttention"] # Modules will be specific to your model, but you can target any number of them
 oft_params, train_names = inject_trainable_oft(model, target_replace_module=ft_modules, 
                                               verbose=False, r=oft_r, eps=oft_eps, is_coft=oft_coft, block_share=oft_block_share,
                                               normalize=normalize, search_class=search_class)
-
 # Set optimizer
 optim_groups = [
     {
