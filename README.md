@@ -37,19 +37,15 @@ Below is a sample training run on tiny shakespeare (100 iterations) comparing re
 ![Training run for tiny shakespeare dataset](assets/shakespeare-training.png)
 
 
-### General Usage With Hugging Face Transformers
-Here is how you can use the codebase to apply OFT to causal language models from hugging face hub.
+### General Usage 
+In general, you can inject OFT into any PyTorch model with linear layers.
 
 ```python
 from finetuning.modular_oft import inject_trainable_oft
-from transformers import AutoTokenizer, RobertaForCausalLM, AutoConfig
 import torch
 
-# Load model and tokenizer, freeze model weights
-tokenizer = AutoTokenizer.from_pretrained("roberta-base")
-config = AutoConfig.from_pretrained("roberta-base")
-config.is_decoder = True
-model = RobertaForCausalLM.from_pretrained("roberta-base", config=config)
+# Load model and tokenizer, then freeze model weights
+# ...
 model.requires_grad_(False)
 
 # Set OFT parameters
@@ -57,19 +53,20 @@ oft_r=4
 oft_eps=1e-3
 oft_coft=False
 oft_block_share=False
+normalize=False
+search_class=[nn.Linear] # Default is only nn.Linear, but you can also pass nn.Conv2d
 
 # Set training and optimization parameters
 learning_rate=2e-5
 weight_decay=0.01
 beta1 = 0.9
 beta2 = 0.95
-grad_clip = 1.0 
-device = 'cuda'
-device_type = 'cuda' if 'cuda' in device else 'cpu'
 
-# Replace linear modules with trainable OFT linear modules
-ft_modules = ["MODULE_TO_TARGET"]
-oft_params, train_names = inject_trainable_oft(model, target_replace_module=ft_modules, verbose=False, r=oft_r, eps=oft_eps, is_coft=oft_coft, block_share=oft_block_share)
+# Replace modules with trainable OFT linear modules
+ft_modules = ["CausalAttention"]
+oft_params, train_names = inject_trainable_oft(model, target_replace_module=ft_modules, 
+                                              verbose=False, r=oft_r, eps=oft_eps, is_coft=oft_coft, block_share=oft_block_share,
+                                              normalize=normalize, search_class=search_class)
 
 # Set optimizer
 optim_groups = [
@@ -78,23 +75,17 @@ optim_groups = [
         "weight_decay": weight_decay
     }
 ]
-optimizer = torch.optim.AdamW(optim_groups, lr=learning_rate, betas=betas)
+optimizer = torch.optim.AdamW(optim_groups, lr=learning_rate, betas=(beta1, beta2))
 
-# Set training arguments and begin training
-training_args = TrainingArguments(...)
-trainer = Trainer(
-    model=model,
-    args=training_args,
-    train_dataset=lm_dataset["train"],
-    eval_dataset=lm_dataset["test"],
-    data_collator=data_collator,
-    optimizers=(optimizer, None)
-)
-
-trainer.train()
+# Train as usual
+# ...
 ```
 
-You can try fine-tuning a [roberta-base](https://huggingface.co/roberta-base) on the [eli5](https://huggingface.co/datasets/eli5) dataset using the `train_huggingface.py` script. Just make sure that whatever causal language model you're using actually has linear layers (GPT2 style models use Conv1D instead of Linear). If you're not sure, you can set `debug = True` in the training script to check the modules.
+You can also try fine-tuning a [roberta-base](https://huggingface.co/roberta-base) on the [eli5](https://huggingface.co/datasets/eli5) dataset using the `train_huggingface.py` script. Just make sure that whatever causal language model you're using actually has linear layers (GPT2 style models use Conv1D instead of Linear). If you're not sure, you can set `debug = True` in the training script to check the modules.
+
+```
+python train_huggingface.py
+```
 
 
 ### Evaluations
@@ -108,7 +99,7 @@ python lm-evaluation-harness/main.py --model hf-causal --model_args pretrained=a
 ### Special Thanks
 - This project is an extension of the [karpathy/nanoGPT](https://github.com/karpathy/nanoGPT) repository created by Andrej Karpathy.
 - It is also heavily inspired by [cccntu/minLoRA](https://github.com/cccntu/minLoRA/tree/main), although the much of the actual LoRA and OFT implementations are borrowed from [cloneofsimo/lora](https://github.com/cloneofsimo/lora) and [Zeju1997/oft](https://github.com/Zeju1997/oft) respectively.
-    - The original minLoRA implementation has been moved to finetuning.parametrized_lora and can be set using `use_plora` in your config file. The modular versions of LoRA and OFT can be set using the `use_mlora` and `use_moft` flags.
+    - The original minLoRA implementation has been moved to `finetuning.parametrized_lora` and can be set using `use_plora` in your config file. The modular versions of LoRA and OFT can be set using the `use_mlora` and `use_moft` flags.
 
 
 
@@ -120,5 +111,6 @@ python lm-evaluation-harness/main.py --model hf-causal --model_args pretrained=a
 - [ ] Clean up and customize configs
 - [ ] Remove redundant implementations
 - [ ] Test OFT implementation for Conv1D, Conv2D, Embedding layers
-- [ ] Include usage demo in README.md
-- [ ] Include huggingface training example
+- [x] Include usage demo in README.md
+- [x] Include huggingface training example
+- [ ] Clean up and simplify implementation

@@ -33,12 +33,7 @@ from model import GPTConfig, GPT
 from finetuning.parametrized_lora import add_lora
 from finetuning.parametrized_oft import add_oft
 
-from finetuning.modular_oft import (
-    inject_trainable_oft, 
-    inject_trainable_oft_conv, 
-    inject_trainable_oft_extended, 
-    inject_trainable_oft_with_norm
-)
+from finetuning.modular_oft import inject_trainable_oft
 from finetuning.modular_lora import inject_trainable_lora
 
 from finetuning.utils import (
@@ -53,6 +48,8 @@ from finetuning.utils import (
 )
 
 import tiktoken
+
+debug = False
 
 out_dir = 'out'
 eval_interval = 2000
@@ -282,9 +279,9 @@ else:
     print(f'not using LoRA or OFT...')
     optimizer = model.configure_optimizers(weight_decay, learning_rate, (beta1, beta2), device_type)
     
-    
-for name, param in model.named_parameters():
-    print(f"{name} // requires_grad: {param.requires_grad}")
+if debug: 
+    for name, param in model.named_parameters():
+        print(f"{name} // requires_grad: {param.requires_grad}")
 
 
 if compile:
