@@ -6,7 +6,7 @@ same layer, and it achieves stronger generalization and consistently more stable
 ![Comparison of LoRA and OFT](assets/oft-lora.png)
 
 ### Training on Guanaco
-To prepare the guanaco dataset for GPT2 and train, run the following commands:
+To prepare the [openassistant-guanaco](https://huggingface.co/datasets/timdettmers/openassistant-guanaco) instruction tuning dataset for GPT2 and start training, run the following commands:
 ```
 python data/guanaco/prepare.py
 python train_nanogpt.py config/finetune_guanaco.py
@@ -22,9 +22,9 @@ Below is a sample training run on guanaco (100 iterations) comparing regular fin
 
 
 ### Training on Tiny Shakespeare
-To prepare the tiny shakespeare dataset for GPT2 and train, run the following commands:
+To prepare the [tiny-shakespeare](https://raw.githubusercontent.com/karpathy/char-rnn/master/data/tinyshakespeare/input.txt) text dataset for GPT2 and start training, run the following commands:
 ```
-python data/guanaco/prepare.py
+python data/shakespeare/prepare.py
 python train_nanogpt.py config/finetune_shakespeare.py
 ```
 
@@ -113,4 +113,4 @@ python lm-evaluation-harness/main.py --model hf-causal --model_args pretrained=a
 - [ ] Test OFT implementation for Conv1D, Conv2D, Embedding layers
 - [x] Include usage demo in README.md
 - [x] Include huggingface training example
-- [ ] Clean up and simplify implementation
+- [x] Clean up and simplify implementation
