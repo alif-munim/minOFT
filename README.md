@@ -1,5 +1,5 @@
 ## MinOFT
-A minimal GPT2 reimplementation of orthogonal fine-tuning (OFT), introduced in the paper [Controlling Text-to-Image Diffusion by Orthogonal Finetuning](https://arxiv.org/abs/2306.07280). LoRA updates the pretrained weight
+An extension of [karpathy/nanoGPT](https://github.com/karpathy/nanoGPT) which includes orthogonal fine-tuning (OFT), introduced in the paper [Controlling Text-to-Image Diffusion by Orthogonal Finetuning](https://arxiv.org/abs/2306.07280). LoRA updates the pretrained weight
 matrix by adding a product of two low-rank matrices. OFT learns an orthogonal matrix to transform the neurons of the
 same layer, and it achieves stronger generalization and consistently more stable training than LoRA.
 
