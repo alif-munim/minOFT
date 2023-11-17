@@ -30,13 +30,13 @@ from torch.distributed import init_process_group, destroy_process_group
 
 from model import GPTConfig, GPT
 
-from finetuning.parametrized_lora import add_lora
-from finetuning.parametrized_oft import add_oft
+from minoft.parametrized_lora import add_lora
+from minoft.parametrized_oft import add_oft
 
-from finetuning.modular_oft import inject_trainable_oft
-from finetuning.modular_lora import inject_trainable_lora
+from minoft.modular_oft import inject_trainable_oft
+from minoft.modular_lora import inject_trainable_lora
 
-from finetuning.utils import (
+from minoft.utils import (
     get_lora_params, 
     get_lora_state_dict, 
     get_oft_params, 

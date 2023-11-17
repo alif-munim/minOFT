@@ -2,8 +2,8 @@ import time
 from functools import partial
 
 import torch
-from finetuning.parametrized_lora import LoRAParametrization
-from finetuning.parametrized_oft import OFTParametrization
+from minoft.parametrized_lora import LoRAParametrization
+from minoft.parametrized_oft import OFTParametrization
 
 out_dir = 'out-shakespeare'
 eval_interval = 5

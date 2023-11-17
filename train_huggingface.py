@@ -6,7 +6,7 @@ Adapted for OFT by Alif Munim
 """
 
 from datasets import load_dataset
-from transformers (
+from transformers import (
     AutoTokenizer, 
     AutoConfig,
     AutoModelForCausalLM, 
@@ -20,7 +20,12 @@ import math
 import inspect
 import torch
 
-from finetuning.modular_oft import inject_trainable_oft 
+from minoft.modular_oft import inject_trainable_oft 
+
+
+# Hacky fix for RuntimeError: lazy wrapper should be called at most once
+# https://github.com/pytorch/pytorch/issues/90613
+torch.inverse(torch.ones((0, 0), device="cuda:0"))
 
 
 # Define helper functions for data pre-processing and optimization
@@ -114,10 +119,6 @@ if debug:
     module_names = unique_modules(model)
     print(module_names)
 
-# Hacky fix for RuntimeError: lazy wrapper should be called at most once
-# https://github.com/pytorch/pytorch/issues/90613
-torch.inverse(torch.ones((0, 0), device="cuda:0"))
-
 
 ft_modules = ["RobertaSelfAttention"]
 model.requires_grad_(False)
@@ -151,7 +152,7 @@ lm_dataset = tokenized_eli5.map(group_texts, batched=True, num_proc=4)
 
 # Begin training
 training_args = TrainingArguments(
-    output_dir="distilgpt2",
+    output_dir="roberta_eli5",
     evaluation_strategy="epoch",
     report_to="none",
     push_to_hub=True,

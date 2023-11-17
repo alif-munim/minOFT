@@ -2,8 +2,8 @@ import torch
 import os
 
 from model import GPTConfig, GPT
-from finetuning.modular_lora import inject_trainable_lora, collapse_lora, monkeypatch_remove_lora
-from finetuning.modular_oft import inject_trainable_oft, collapse_oft, monkeypatch_remove_oft
+from minoft.modular_lora import inject_trainable_lora, collapse_lora, monkeypatch_remove_lora
+from minoft.modular_oft import inject_trainable_oft, collapse_oft, monkeypatch_remove_oft
 
 n_layer = 12
 n_head = 12

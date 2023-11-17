@@ -49,10 +49,19 @@ Below is a sample training run on guanaco (100 iterations) comparing regular fin
 
 
 ### General Usage 
-In general, you can inject OFT into any PyTorch model with linear layers.
+
+You can install minOFT using the commands below:
+
+```
+git clone https://github.com/alif-munim/minOFT.git
+cd minOFT/
+pip install -e .
+```
+
+Then, you can inject OFT into any PyTorch model with linear layers.
 
 ```python
-from finetuning.modular_oft import inject_trainable_oft
+from minoft.modular_oft import inject_trainable_oft
 import torch
 
 # Load model and tokenizer, then freeze model weights

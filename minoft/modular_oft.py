@@ -20,6 +20,10 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+# Hacky fix for RuntimeError: lazy wrapper should be called at most once
+# https://github.com/pytorch/pytorch/issues/90613
+torch.inverse(torch.ones((0, 0), device="cuda"))
+
 try:
     from safetensors.torch import safe_open
     from safetensors.torch import save_file as safe_save
@@ -153,6 +157,11 @@ class OFTInjectedLinear(nn.Module):
         return Q
     
     def cayley_batch(self, data):
+        
+        # Hacky fix for RuntimeError: lazy wrapper should be called at most once
+        # https://github.com/pytorch/pytorch/issues/90613
+        # torch.inverse(torch.ones((0, 0), device=data.device))
+
         b, r, c = data.shape
         # Ensure the input matrix is skew-symmetric
         skew = 0.5 * (data - data.transpose(1, 2))
@@ -263,6 +272,11 @@ class OFTInjectedConv2d(nn.Module):
         return Q
     
     def cayley_batch(self, data):
+        
+        # Hacky fix for RuntimeError: lazy wrapper should be called at most once
+        # https://github.com/pytorch/pytorch/issues/90613
+        # torch.inverse(torch.ones((0, 0), device=data.device))
+        
         b, r, c = data.shape
         # Ensure the input matrix is skew-symmetric
         skew = 0.5 * (data - data.transpose(1, 2))
